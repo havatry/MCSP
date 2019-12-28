@@ -10,30 +10,30 @@ import randomTopology.Constant;
 public class MDijkstra extends Dijkstra{
 	public List<Integer> YenFindPath(int[] Node, double[][] Edge, double[][] Id, int[][] IdLink, int start,
 			int end, int v1, int v2) {
-		// Ã÷È·ÒªÊ¹ÓÃÈı¸öÈİÆ÷£¬Ò»¸öÓÃÀ´×°ºòÑ¡Â·¾¶B£¬Ò»¸ö×°×îÖÕ¶¨ÏÂÀ´µÄÂ·¾¶A
+		// æ˜ç¡®è¦ä½¿ç”¨ä¸‰ä¸ªå®¹å™¨ï¼Œä¸€ä¸ªç”¨æ¥è£…å€™é€‰è·¯å¾„Bï¼Œä¸€ä¸ªè£…æœ€ç»ˆå®šä¸‹æ¥çš„è·¯å¾„A
 		List<List<Integer>> A = new ArrayList<>();
 		List<List<Integer>> B = new ArrayList<>();
-		List<Integer> shortestPath = DijkstraOfPath(Node, Edge, start, end);// µ÷ÓÃdijkstraËã·¨ÇóµÃ×î¶ÌÂ·¾¶
-		double[][] subEdge = Common.deepCloneEdge(Edge);// ±£´æ±ß´ú¼Û¾ØÕó
+		List<Integer> shortestPath = DijkstraOfPath(Node, Edge, start, end);// è°ƒç”¨dijkstraç®—æ³•æ±‚å¾—æœ€çŸ­è·¯å¾„
+		double[][] subEdge = Common.deepCloneEdge(Edge);// ä¿å­˜è¾¹ä»£ä»·çŸ©é˜µ
 		while (true) {
-			Edge = Common.deepCloneEdge(subEdge);// Ã¿´ÎÖ´ĞĞÇ°¶¼»á±£´æ¾ØÕó£¬·ÀÖ¹ÔÚÔËĞĞÖĞ·¢Éú±ä»¯£¬ÖØÒª¡£
-			// ¼ÆËãÇó³öµÄshortCost¶ÔÓ¦µÄ´ú¼Û(ĞÂÍøÂçÖĞµÄ)
+			Edge = Common.deepCloneEdge(subEdge);// æ¯æ¬¡æ‰§è¡Œå‰éƒ½ä¼šä¿å­˜çŸ©é˜µï¼Œé˜²æ­¢åœ¨è¿è¡Œä¸­å‘ç”Ÿå˜åŒ–ï¼Œé‡è¦ã€‚
+			// è®¡ç®—æ±‚å‡ºçš„shortCostå¯¹åº”çš„ä»£ä»·(æ–°ç½‘ç»œä¸­çš„)
 			double shortCost = 0;
 			for (int i = shortestPath.size() - 1; i >= 1; i--) {
 				int node1 = shortestPath.get(i);
 				int node2 = shortestPath.get(i - 1);
 				shortCost += Edge[node1][node2];
 			}
-			// ÅĞ¶Ï×î¶ÌÂ·¾¶µÄ´ú¼ÛÊÇ²»ÊÇ³¬¹ı¸ø¶¨µÄÒ»¸öÖµ£¬Èç¹û³¬³öÊµ¼ÊÉÏ¸ÃÂ·¾¶ÒÑ¾­ÊÇ²»´æÔÚµÄÁË¡£
-			// »¹¼ÇµÃÎÒÃÇÖ®Ç°ÓÃÒ»¸öºÜ´óµÄÖµ´ú±íÁ½µãÖ®¼äÃ»ÓĞÂ·¾¶¡£
-			if (shortCost > Constant.notExistsPathForValue)// ÒÀ¾İ¾ßÌåÇé¿öµ÷Õû
+			// åˆ¤æ–­æœ€çŸ­è·¯å¾„çš„ä»£ä»·æ˜¯ä¸æ˜¯è¶…è¿‡ç»™å®šçš„ä¸€ä¸ªå€¼ï¼Œå¦‚æœè¶…å‡ºå®é™…ä¸Šè¯¥è·¯å¾„å·²ç»æ˜¯ä¸å­˜åœ¨çš„äº†ã€‚
+			// è¿˜è®°å¾—æˆ‘ä»¬ä¹‹å‰ç”¨ä¸€ä¸ªå¾ˆå¤§çš„å€¼ä»£è¡¨ä¸¤ç‚¹ä¹‹é—´æ²¡æœ‰è·¯å¾„ã€‚
+			if (shortCost > Constant.notExistsPathForValue)// ä¾æ®å…·ä½“æƒ…å†µè°ƒæ•´
 				return null;
 
-			double MAX_NUMBER = Constant.ExistsPathForValue;// ÓÃÓÚÉ¸Ñ¡×î¶ÌÂ·¾¶£¬ÒÀ¾İ¾ßÌåÇé¿öµ÷Õû
-			A.add(shortestPath);// µÚÒ»¸öÎŞÕùÒéµØ¶¨ÏÂÀ´µÄÂ·¾¶
+			double MAX_NUMBER = Constant.ExistsPathForValue;// ç”¨äºç­›é€‰æœ€çŸ­è·¯å¾„ï¼Œä¾æ®å…·ä½“æƒ…å†µè°ƒæ•´
+			A.add(shortestPath);// ç¬¬ä¸€ä¸ªæ— äº‰è®®åœ°å®šä¸‹æ¥çš„è·¯å¾„
 			if (A.size() >= Constant.notExistsPathForYenKValue)
-				return null;// ÊÓÎª²»´æÔÚÂ·¾¶£¬ÒòÎª¸Ã·½·¨×î¶àÇó¸ø¶¨µÄÒ»ÍòÌõÂ·¾¶
-			// ºËĞÄÅĞ¶Ï
+				return null;// è§†ä¸ºä¸å­˜åœ¨è·¯å¾„ï¼Œå› ä¸ºè¯¥æ–¹æ³•æœ€å¤šæ±‚ç»™å®šçš„ä¸€ä¸‡æ¡è·¯å¾„
+			// æ ¸å¿ƒåˆ¤æ–­
 			double cs = Common.Ctheta(shortestPath, Id, IdLink);
 			double ps = Common.Ptheta(shortestPath, Id, IdLink);
 			if((cs < v1 + Constant.esp && v1 - Constant.esp < cs)
@@ -41,29 +41,29 @@ public class MDijkstra extends Dijkstra{
 				return shortestPath;
 			}
 			
-			// ÏÂÃæ¿ªÊ¼ÒÀ´ÎÉ¾³ı±ß£¬¼´ÊÇYENËã·¨¡£Çë²Î¿¼Î¬»ù°Ù¿Æ¹ØÓÚYenËã·¨µÄÏêÏ¸¹ı³Ì¡£
+			// ä¸‹é¢å¼€å§‹ä¾æ¬¡åˆ é™¤è¾¹ï¼Œå³æ˜¯YENç®—æ³•ã€‚è¯·å‚è€ƒç»´åŸºç™¾ç§‘å…³äºYenç®—æ³•çš„è¯¦ç»†è¿‡ç¨‹ã€‚
 			List<Integer> rootPath = new ArrayList<>();
 			for (int i = shortestPath.size() - 1; i >= 1; i--) {
-				int relateI = shortestPath.size() - 1 - i;// Ïà¶Ô±äÁ¿i´Ó0µ½size-1
+				int relateI = shortestPath.size() - 1 - i;// ç›¸å¯¹å˜é‡iä»0åˆ°size-1
 				rootPath.add(shortestPath.get(i));
 				int spurNode = shortestPath.get(i);
-				Edge = Common.deepCloneEdge(subEdge);// Ê¹ÓÃÎ´±äµÄ¸±±¾
-				// ½ÓÏÂÀ´É¾³ı³ıÁËspurNodeÖ®ÍâµÄËùÓĞ½Úµã
+				Edge = Common.deepCloneEdge(subEdge);// ä½¿ç”¨æœªå˜çš„å‰¯æœ¬
+				// æ¥ä¸‹æ¥åˆ é™¤é™¤äº†spurNodeä¹‹å¤–çš„æ‰€æœ‰èŠ‚ç‚¹
 				for (int j = 0; j < rootPath.size(); j++) {
 					if (rootPath.get(j) != spurNode) {
 						for (int m = 0; m < Edge.length; m++) {
-							Edge[rootPath.get(j)][m] = Constant.MAX_VALUE;// É¾³ıĞĞ
-							Edge[m][rootPath.get(j)] = Constant.MAX_VALUE;// É¾³ıÁĞ
-							// ÒÔÉÏ±íÊ¾ÒÑ¾­É¾³ı·Çspur½Úµã
+							Edge[rootPath.get(j)][m] = Constant.MAX_VALUE;// åˆ é™¤è¡Œ
+							Edge[m][rootPath.get(j)] = Constant.MAX_VALUE;// åˆ é™¤åˆ—
+							// ä»¥ä¸Šè¡¨ç¤ºå·²ç»åˆ é™¤éspurèŠ‚ç‚¹
 						}
 					}
 				}
-				// µÃµ½¸üĞÂºóµÄEdge
-				// ÏÂÃæÇóspurPath
-				int leftNode = shortestPath.get(i);// ÒªÉ¾³ı±ßµÄ¸ùµã
-				List<Integer> nodes = new ArrayList<>();// ÒªÉ¾³ı±ßµÄÏÂÒ»¸ö½ÚµãµÄ¼¯ºÏ
-				for (int j = 0; j < A.size(); j++) {// ÒÀ´Î±éÀúAÖĞËùÓĞ¶¨ÏÂÀ´µÄÁ´±í
-					if (relateI >= A.get(j).size() - 1)// ÒÑ¾­¸Ä¶¯
+				// å¾—åˆ°æ›´æ–°åçš„Edge
+				// ä¸‹é¢æ±‚spurPath
+				int leftNode = shortestPath.get(i);// è¦åˆ é™¤è¾¹çš„æ ¹ç‚¹
+				List<Integer> nodes = new ArrayList<>();// è¦åˆ é™¤è¾¹çš„ä¸‹ä¸€ä¸ªèŠ‚ç‚¹çš„é›†åˆ
+				for (int j = 0; j < A.size(); j++) {// ä¾æ¬¡éå†Aä¸­æ‰€æœ‰å®šä¸‹æ¥çš„é“¾è¡¨
+					if (relateI >= A.get(j).size() - 1)// å·²ç»æ”¹åŠ¨
 						continue;
 					if (A.get(j).size() <= rootPath.size())
 						break;
@@ -71,7 +71,7 @@ public class MDijkstra extends Dijkstra{
 					int current = 0;
 					boolean add = true;
 					int h = len - 1;
-					for (; h >= len - rootPath.size(); h--) {// ¸ü¸ÄÖ®ºóµÄ
+					for (; h >= len - rootPath.size(); h--) {// æ›´æ”¹ä¹‹åçš„
 						if (A.get(j).get(h) == rootPath.get(current)) {
 							current++;
 						} else {
@@ -82,39 +82,39 @@ public class MDijkstra extends Dijkstra{
 					if (add)
 						nodes.add(A.get(j).get(h));
 				}
-				// ÖÁ´ËÒÑ¾­µÃµ½ËùÓĞÓëleftNodeÏàÁ¬µÄAÖĞµã
-				// ÖØµã£º¿ªÊ¼ÒÀ´ÎÉ¾±ß
+				// è‡³æ­¤å·²ç»å¾—åˆ°æ‰€æœ‰ä¸leftNodeç›¸è¿çš„Aä¸­ç‚¹
+				// é‡ç‚¹ï¼šå¼€å§‹ä¾æ¬¡åˆ è¾¹
 				for (int j = 0; j < nodes.size(); j++) {
 					int rightNode = nodes.get(j);
 					Edge[leftNode][rightNode] = Constant.MAX_VALUE;
 				}
-				List<Integer> spurpath = DijkstraOfPath(Node, Edge, spurNode, end);// ÕâÊÇÉ¾³ı±ßºóµÃµ½×î¶ÌÂ·¾¶
+				List<Integer> spurpath = DijkstraOfPath(Node, Edge, spurNode, end);// è¿™æ˜¯åˆ é™¤è¾¹åå¾—åˆ°æœ€çŸ­è·¯å¾„
 				List<Integer> path = conj(rootPath, spurpath);
-				if ((!A.contains(path)) && (!B.contains(path)))// ±£Ö¤¸ÃÂ·¾¶ÓëÖ®Ç°µÄ²»ÖØ¸´
+				if ((!A.contains(path)) && (!B.contains(path)))// ä¿è¯è¯¥è·¯å¾„ä¸ä¹‹å‰çš„ä¸é‡å¤
 					B.add(path);
 			}
 
 			if (B.size() == 0) {
-				return null;// Èç¹ûÃ»ÓĞºòÑ¡µÄ¾ÍÌø³ö
+				return null;// å¦‚æœæ²¡æœ‰å€™é€‰çš„å°±è·³å‡º
 			}
 
-			// ´ÓBÈİÆ÷£¬ºòÑ¡Â·¾¶ÖĞÕÒ³ö´ú¼Û×îĞ¡µÄÄÇ¸öÂ·¾¶£¬²¢´ÓBÈİÆ÷ÖĞÉ¾³ı£¬×÷ÎªÏÂÒ»¸öshortestPath½øĞĞÑ­»·
+			// ä»Bå®¹å™¨ï¼Œå€™é€‰è·¯å¾„ä¸­æ‰¾å‡ºä»£ä»·æœ€å°çš„é‚£ä¸ªè·¯å¾„ï¼Œå¹¶ä»Bå®¹å™¨ä¸­åˆ é™¤ï¼Œä½œä¸ºä¸‹ä¸€ä¸ªshortestPathè¿›è¡Œå¾ªç¯
 			Edge = Common.deepCloneEdge(subEdge);
-			int u = -1;// ¼ÇÏÂÁôÏÂµÄ×îĞ¡µÄÂ·¾¶
+			int u = -1;// è®°ä¸‹ç•™ä¸‹çš„æœ€å°çš„è·¯å¾„
 			for (int i = 0; i < B.size(); i++) {
-				double cost = 0;// ÓÃÓÚ±È½Ï×îĞ¡µÄcost
+				double cost = 0;// ç”¨äºæ¯”è¾ƒæœ€å°çš„cost
 				for (int j = B.get(i).size() - 1; j >= 1; j--) {
 					int foreNode = B.get(i).get(j);
 					int nextNode = B.get(i).get(j - 1);
 					cost += Edge[foreNode][nextNode];
-				} // Çó³öÄÃ³öÀ´µÄµÚÒ»¸öÂ·¾¶µÄ´ú¼Û
+				} // æ±‚å‡ºæ‹¿å‡ºæ¥çš„ç¬¬ä¸€ä¸ªè·¯å¾„çš„ä»£ä»·
 				if (cost < MAX_NUMBER) {
 					MAX_NUMBER = cost;
 					shortestPath = Common.deepCloneList(B.get(i));
 					u = i;
 				}
 			}
-			B.remove(u);// ½«¸ÃÂ·¾¶´ÓÈİÆ÷ÖĞÉ¾³ıÖ®
+			B.remove(u);// å°†è¯¥è·¯å¾„ä»å®¹å™¨ä¸­åˆ é™¤ä¹‹
 		}
 	}
 }

@@ -3,7 +3,7 @@ package com.lt.topology;
 import randomTopology.Pair;
 
 public class MPair extends Pair{
-	private int loss; // µÚ¶ş¸öÔ¼Êø
+	private int loss; // ç¬¬äºŒä¸ªçº¦æŸ
 	
 	public int getLoss() {
 		return loss;

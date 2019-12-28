@@ -13,57 +13,57 @@ public class ExtendBiLAD extends BiLAD{
 			int end) {
 		//Created method stubs
 		// TODO Auto-generated method stub
-		// ¼ÆËãc×îĞ¡Â·¾¶
+		// è®¡ç®—cæœ€å°è·¯å¾„
 		double thetaBelow = 0;
 		List<Integer> pathBelow = getPath(Node, Id, thetaBelow, start, end);// c-minimal
 																			// path,p+
 		double CthetaBelow = Ctheta(pathBelow, Id, IdLink);
 		double PthetaBelow = Ptheta(pathBelow, Id, IdLink);
-		// ÅĞ¶Ï£¬Èç¹ûc×îĞ¡µÄÂ·¾¶¶ÔÓ¦µÄÑÓÊ±±ÈÑÓÊ±ãĞÖµĞ¡¡£ËµÃ÷´ËÊ±µÄÂ·¾¶ÊÇ×îÓÅµÄ½â¡£Ö±½Ó·µ»Ø¡£
+		// åˆ¤æ–­ï¼Œå¦‚æœcæœ€å°çš„è·¯å¾„å¯¹åº”çš„å»¶æ—¶æ¯”å»¶æ—¶é˜ˆå€¼å°ã€‚è¯´æ˜æ­¤æ—¶çš„è·¯å¾„æ˜¯æœ€ä¼˜çš„è§£ã€‚ç›´æ¥è¿”å›ã€‚
 		if (PthetaBelow <= delayConstraint) {
 			theta = thetaBelow;
 			return pathBelow;// if d(pc)<=D then return Pc
 		}
 
-		// ¼ÆËãd×îĞ¡Â·¾¶
+		// è®¡ç®—dæœ€å°è·¯å¾„
 		double thetaTop = (double) Math.PI / 2;
 		List<Integer> pathTop = getPath(Node, Id, thetaTop, start, end);// d-minimal
 																		// path
 																		// p
 		double CthetaTop = Ctheta(pathTop, Id, IdLink);
 		double PthetaTop = Ptheta(pathTop, Id, IdLink);
-		// ÅĞ¶Ï£¬Èç¹ûd×îĞ¡µÄÂ·¾¶¶ÔÓ¦ÑÓÊ±±ÈÑÓÊ±ãĞÖµ»¹´ó¡£ËµÃ÷ÍøÂçÖĞ²»´æÔÚ·ûºÏÌõ¼şµÄÂ·¾¶¡£Ö±½Ó·µ»Ønull¡£
+		// åˆ¤æ–­ï¼Œå¦‚æœdæœ€å°çš„è·¯å¾„å¯¹åº”å»¶æ—¶æ¯”å»¶æ—¶é˜ˆå€¼è¿˜å¤§ã€‚è¯´æ˜ç½‘ç»œä¸­ä¸å­˜åœ¨ç¬¦åˆæ¡ä»¶çš„è·¯å¾„ã€‚ç›´æ¥è¿”å›nullã€‚
 		if (PthetaTop > delayConstraint)
 			return null;// there is no solution
 
-		// ºËĞÄ²Ù×÷
+		// æ ¸å¿ƒæ“ä½œ
 		while (true) {
-			// ´¦ÀíÕâÀàÌØÊâÇé¿ö¡£ÒòÎªµ±CthetaTopºÍCthetaBelowÏàµÈµÄÊ±ºò£¬ËµÃ÷Á¬Ïß´¦ÓÚË®Æ½×´Ì¬¡£
-			// »á³öÏÖË®Æ½ÏßÎÊÌâ£¬¹ØÓÚË®Æ½ÏßÎÊÌâ£¬´ıÕûÀí......
+			// å¤„ç†è¿™ç±»ç‰¹æ®Šæƒ…å†µã€‚å› ä¸ºå½“CthetaTopå’ŒCthetaBelowç›¸ç­‰çš„æ—¶å€™ï¼Œè¯´æ˜è¿çº¿å¤„äºæ°´å¹³çŠ¶æ€ã€‚
+			// ä¼šå‡ºç°æ°´å¹³çº¿é—®é¢˜ï¼Œå…³äºæ°´å¹³çº¿é—®é¢˜ï¼Œå¾…æ•´ç†......
 			if (CthetaTop == CthetaBelow) {
 				theta = 0.0;
 				return pathTop; // special
 			}
 			// if(thetaTop-thetaBelow<esp) return pathTop;
-			// //¸ÃÌõ¼şÔÚÊµ¼ÊÔËĞĞÖĞºÜÉÙÓÃµ½£¬ÕâÀïdiscard
-			// theta2CurrentÊÇÁ½µãÁ¬ÏßĞ±ÂÊ¶ÔÓ¦µÄ½Ç¶È
-			double theta2Current = Math.abs(Math.atan(Math.abs((CthetaTop - CthetaBelow) / (PthetaBelow - PthetaTop))));// ±£Ö¤atanÀïÃæÎªÕıÊı,ÀíÂÛÉÏÒ²ÊÇÕıµÄ
-			// ÕâÀï±íÊ¾ÊÇ·ñ½øĞĞ¶ş·ÖµÄÌõ¼ş£¬¸ÃÌõ¼şÓÉÔ­×÷ÕßÌá¹©£¬Ï¸½ÚÔİ²»Ìá¹©......
+			// //è¯¥æ¡ä»¶åœ¨å®é™…è¿è¡Œä¸­å¾ˆå°‘ç”¨åˆ°ï¼Œè¿™é‡Œdiscard
+			// theta2Currentæ˜¯ä¸¤ç‚¹è¿çº¿æ–œç‡å¯¹åº”çš„è§’åº¦
+			double theta2Current = Math.abs(Math.atan(Math.abs((CthetaTop - CthetaBelow) / (PthetaBelow - PthetaTop))));// ä¿è¯atané‡Œé¢ä¸ºæ­£æ•°,ç†è®ºä¸Šä¹Ÿæ˜¯æ­£çš„
+			// è¿™é‡Œè¡¨ç¤ºæ˜¯å¦è¿›è¡ŒäºŒåˆ†çš„æ¡ä»¶ï¼Œè¯¥æ¡ä»¶ç”±åŸä½œè€…æä¾›ï¼Œç»†èŠ‚æš‚ä¸æä¾›......
 			if (Math.abs(theta2Current - (thetaTop + thetaBelow) / 2) >= (0.5 - gama) * (thetaTop - thetaBelow))
 				theta2Current = (thetaTop + thetaBelow) / 2;
-			// ·µ»ØÁ½ÌõÂ·¾¶¡£ÕâÁ½ÌõÂ·¾¶·Ö±ğÊÇc×îĞ¡Â·¾¶ºÍd×îĞ¡Â·¾¶¡£¸Ã¼¼ÊõÊÇÓÉAdujstDijkstraOfPathÀ´ÊµÏÖ£¬¾ßÌåÏ¸½Ú¼û±¾°üÖĞDijkstraÀà¡£
+			// è¿”å›ä¸¤æ¡è·¯å¾„ã€‚è¿™ä¸¤æ¡è·¯å¾„åˆ†åˆ«æ˜¯cæœ€å°è·¯å¾„å’Œdæœ€å°è·¯å¾„ã€‚è¯¥æŠ€æœ¯æ˜¯ç”±AdujstDijkstraOfPathæ¥å®ç°ï¼Œå…·ä½“ç»†èŠ‚è§æœ¬åŒ…ä¸­Dijkstraç±»ã€‚
 			List<List<Integer>> paths = new MDijkstra().AdjustDijkstraOfPath(Node,
 					Common.getEdge(Node, Id, IdLink, theta2Current), Id, IdLink, start, end);
-			CallDijkstraTime++;// ÉÏÃæµÄµ÷ÓÃ£¬Êµ¼ÊÉÏÓÃµ½ÁËÒ»´ÎdijkstraËã·¨£¬ÕâÀï½øĞĞ×ÔÔö¡£
-			// ÏÂÃæµÄdPc±íÊ¾c×îĞ¡Â·¾¶¶ÔÓ¦µÄÑÓÊ±
-			// dPd±íÊ¾d×îĞ¡Â·¾¶¶ÔÓ¦µÄÑÓÊ±
+			CallDijkstraTime++;// ä¸Šé¢çš„è°ƒç”¨ï¼Œå®é™…ä¸Šç”¨åˆ°äº†ä¸€æ¬¡dijkstraç®—æ³•ï¼Œè¿™é‡Œè¿›è¡Œè‡ªå¢ã€‚
+			// ä¸‹é¢çš„dPcè¡¨ç¤ºcæœ€å°è·¯å¾„å¯¹åº”çš„å»¶æ—¶
+			// dPdè¡¨ç¤ºdæœ€å°è·¯å¾„å¯¹åº”çš„å»¶æ—¶
 			double dPc = Ptheta(paths.get(0), Id, IdLink);
 			double dPd = Ptheta(paths.get(1), Id, IdLink);
-			// ÏÂÃæµÄif..else if..elseÓÉÔ­×÷ÕßÌá¹©£¬ÕâÀïÔİ²»ÃèÊö...
+			// ä¸‹é¢çš„if..else if..elseç”±åŸä½œè€…æä¾›ï¼Œè¿™é‡Œæš‚ä¸æè¿°...
 			if (dPd <= delayConstraint && dPc >= delayConstraint) {
 				theta = theta2Current;
 				twoPaths = paths;
-				return null;//²»ĞèÒª·µ»Ø
+				return null;//ä¸éœ€è¦è¿”å›
 			} else if (dPd > delayConstraint) {
 				pathBelow = paths.get(1);
 				CthetaBelow = Ctheta(pathBelow, Id, IdLink);

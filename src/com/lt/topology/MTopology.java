@@ -9,12 +9,12 @@ import randomTopology.Node;
 import randomTopology.Topology;
 
 public class MTopology extends Topology{
-	// ¶îÍâ¼ÓÈëlossµÄËæ»úÉú³É
+	// é¢å¤–åŠ å…¥lossçš„éšæœºç”Ÿæˆ
 	@Override
 	public void writeIdToFile() {
-		// ÏÂÃæ¸øÉú³ÉµÄÍøÂçÍØÆË¼ÓÑÓÊ±ºÍ´ú¼Û
-		PriorityQueue<MPair> pq = new PriorityQueue<>(new MPair());// ÓÅÏÈ¶ÓÁĞ
-		for (Node node : graph.getNodes()) {// ±éÀúÃ¿¸ö½Úµã
+		// ä¸‹é¢ç»™ç”Ÿæˆçš„ç½‘ç»œæ‹“æ‰‘åŠ å»¶æ—¶å’Œä»£ä»·
+		PriorityQueue<MPair> pq = new PriorityQueue<>(new MPair());// ä¼˜å…ˆé˜Ÿåˆ—
+		for (Node node : graph.getNodes()) {// éå†æ¯ä¸ªèŠ‚ç‚¹
 			for (Integer value : node.getNeighbors()) {
 				MPair tmp = new MPair();
 				tmp.setStart(node.getIdentifier());
@@ -24,26 +24,26 @@ public class MTopology extends Topology{
 				tmp.setDistance(distance);
 				int cost = (int) (Math.random() * 30) + 1;// 1-15
 				tmp.setCost(cost);
-				// ½«ÁíÒ»¸öÏà¹ØµÄÉ¾³ı£¬ÒòÎªÒ»¸ö±ß¶ÔÓ¦µÄÊÇÁ½¸öÁ´Â·¡£ÕâÁ½¸öÁ´Â·³ıÁËÆğµãºÍÖÕµãÇ¡ºÃÏà·´Íâ
-				// ÆäÓàµÄ¶¼ÏàÍ¬¡£Êµ¼ÊÉÏÕâÀï¾ÍÊÇÉ¾³ıÆğµãºÍÖÕµãºÍµ±Ç°Õâ¸öÁ´Â·Ç¡ºÃÏà·´µÄÄÇ¸öÁ´Â·
-				// Ò²¾ÍÊÇ½«ÆğµãºÍÖÕµãµÄÁÚ¾Óµ÷ÕûÏÂ
+				// å°†å¦ä¸€ä¸ªç›¸å…³çš„åˆ é™¤ï¼Œå› ä¸ºä¸€ä¸ªè¾¹å¯¹åº”çš„æ˜¯ä¸¤ä¸ªé“¾è·¯ã€‚è¿™ä¸¤ä¸ªé“¾è·¯é™¤äº†èµ·ç‚¹å’Œç»ˆç‚¹æ°å¥½ç›¸åå¤–
+				// å…¶ä½™çš„éƒ½ç›¸åŒã€‚å®é™…ä¸Šè¿™é‡Œå°±æ˜¯åˆ é™¤èµ·ç‚¹å’Œç»ˆç‚¹å’Œå½“å‰è¿™ä¸ªé“¾è·¯æ°å¥½ç›¸åçš„é‚£ä¸ªé“¾è·¯
+				// ä¹Ÿå°±æ˜¯å°†èµ·ç‚¹å’Œç»ˆç‚¹çš„é‚»å±…è°ƒæ•´ä¸‹
 				graph.getNodes().get(value).removeEdgeTo(node.getIdentifier());
-				pq.offer(tmp);// ½«µ±Ç°µÄÁ´Â·¶ÔÏó¼ÓÈëµ½ÓÅÏÈ¶ÓÁĞÖĞ£¬ÕâÀïÁ´Â·¶ÔÏó»¹Ã»ÓĞ¶ÔÑÓÊ±¸³Öµ
+				pq.offer(tmp);// å°†å½“å‰çš„é“¾è·¯å¯¹è±¡åŠ å…¥åˆ°ä¼˜å…ˆé˜Ÿåˆ—ä¸­ï¼Œè¿™é‡Œé“¾è·¯å¯¹è±¡è¿˜æ²¡æœ‰å¯¹å»¶æ—¶èµ‹å€¼
 			}
 		}
-		// ¶ÔÇ°75%¸ö½øĞĞÉèÖÃÑÓÊ±1-5,ºó5%ÉèÖÃ20-30,ÆäÓàÉèÖÃ5-8
+		// å¯¹å‰75%ä¸ªè¿›è¡Œè®¾ç½®å»¶æ—¶1-5,å5%è®¾ç½®20-30,å…¶ä½™è®¾ç½®5-8
 		int pre = (int) (pq.size() * 0.75);
 		int post = (int) (pq.size() * 0.95);
 		int size = pq.size();
 		PrintWriter idout = null;
 		try {
-			idout = new PrintWriter(Constant.idFile.replace(".", "_" + Constant.WriteFile_TimeFor + "."));// Í¨ĞÅ
+			idout = new PrintWriter(Constant.idFile.replace(".", "_" + Constant.WriteFile_TimeFor + "."));// é€šä¿¡
 			idout.println("id\tsource\ttarget\tcost\tdelay\tloss");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// ÔÚĞ´ÈëÇ°Íê³É¶ÔÑÓÊ±µÄ¸³Öµ£¬Ò»²¢Ğ´Èë
+		// åœ¨å†™å…¥å‰å®Œæˆå¯¹å»¶æ—¶çš„èµ‹å€¼ï¼Œä¸€å¹¶å†™å…¥
 		for (int i = 0; i < size; i++) {
 			int delay, loss;
 			if (i < pre) {
