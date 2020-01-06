@@ -9,16 +9,20 @@ import randomTopology.Constant;
  * 2020年1月4日 下午1:45:28
  */
 public class MBiLAD extends AbstractMCSPMethods{
-	private int value ;
-	private double lambda1star;
-	private double lambda2star;
+	private Integer value;
+	private Double lambda1star;
+	private Double lambda2star;
 	private List<Integer> p_positive;
 	private List<Integer> p_negative; // 最佳路径
 	private double detal_below;
 	private double detal_top;
+	@SuppressWarnings("unused")
 	private List<Integer> p_below_negative;
+	@SuppressWarnings("unused")
 	private List<Integer> p_below_postive;
+	@SuppressWarnings("unused")
 	private List<Integer> p_top_negative;
+	@SuppressWarnings("unused")
 	private List<Integer> p_top_positive;
 	private double v2_positive;
 	private double v2_negative;
@@ -31,7 +35,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 	@Override
 	public void OptimalPath(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2) { // integer can swap? not
 		//Created method stubs
-		origin = MCommon.deepCloneEdge(Id);
+		origin = MCommon.copyArray(Id);
 		compute(Node, Id, IdLink, start, end, v1, v2);
 	}
 	
@@ -41,7 +45,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 			value = 0;
 			return;
 		}
-		swap(Id, 3, 4);
+		MCommon.swap(Id, 3, 4);
 		List<Integer> p2 = getPath(Node, Id, Math.PI / 2, start, end);
 		if (MCommon.great(Ptheta(p2, Id, IdLink), v2)) {
 			value = 0;
@@ -60,7 +64,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 			return;
 		}
 		if (MCommon.great(f1_value, v1)) {
-			swap(Id, 3, 4); // reset
+			MCommon.swap(Id, 3, 4); // reset
 			step_2_3_6(Node, Id, IdLink, start, end, v1, v2, 2);
 		} else {
 			step_2_3_6(Node, Id, IdLink, start, end, v2, v1, 2);
@@ -70,7 +74,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 	private void step_2_3_6(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2, int mode) {
 		if (mode == 3) {
 			// f2 f1 c
-			swap(Id, 2, 4);
+			MCommon.swap(Id, 2, 4);
 		}
 		ExtendBiLAD extendBiLAD = new ExtendBiLAD();
 		extendBiLAD.OptimalPath(Node, Id, IdLink, v1, start, end);
@@ -91,7 +95,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 		case 2:
 			if (MCommon.smallEqual(v2_wave, v2)) {
 				lambda1star = Math.abs(Math.tan(extendBiLAD.getTheta()));
-				lambda2star = 0;
+				lambda2star = 0.0;
 				p_negative = paths.get(1);
 				p_positive = paths.get(0);
 				value = 2;
@@ -134,7 +138,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 				}
 			}
 		case 6:
-			add(Id, 3, 5, 1, -lambda2); // reset
+			MCommon.add(Id, 3, 5, 1, -lambda2); // reset
 			if (MCommon.equal(v2_wave, v2)) {
 				lambda1star = Math.abs(Math.tan(theta));
 				lambda2star = lambda2;
@@ -170,13 +174,13 @@ public class MBiLAD extends AbstractMCSPMethods{
 	
 	
 	private void step_5(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2) {
-		swap(Id, 2, 4);
-		add(Id, 2, 4, 1, lambda2);
+		MCommon.swap(Id, 2, 4);
+		MCommon.add(Id, 2, 4, 1, lambda2);
 		List<Integer> pc = getPath(Node, Id, 0, start, end);
 		double f1_value = Ptheta(pc, Id, IdLink);
 		double f2_value = Ltheta(pc, Id, IdLink);
 		if (MCommon.smallEqual(f1_value, v1)) {
-			lambda1star = 0;
+			lambda1star = 0.0;
 			if (MCommon.equal(f2_value, v2)) {
 				lambda2star = lambda2;
 				value = 5;
@@ -195,21 +199,6 @@ public class MBiLAD extends AbstractMCSPMethods{
 		}
 	}
 	
-	// swap column i and j in Id
-	private void swap(double[][] Id, int i, int j) {
-		for (double[] dt : Id) {
-			double tp = dt[i];
-			dt[i] = dt[j];
-			dt[j] = tp;
-		}		
-	}
-	
-	private void add(double[][] Id, int i, int j, double im, double jm) {
-		for (double[] dt : Id) {
-			dt[i] = im * dt[i] +  jm * dt[j];
-		}
-	}
-	
 	private void updateMultiplier() {
 		assert v2_negative != v2_positive;
 		lambda2 = (c_positive - c_negative) / (v2_negative - v2_positive);
@@ -218,5 +207,26 @@ public class MBiLAD extends AbstractMCSPMethods{
 			delta = (detal_below + detal_top) / 2;
 			lambda2 = Math.abs(Math.tan(delta));
 		}
+	}
+	
+	// get methods
+	public Double getLambda1star() {
+		return lambda1star;
+	}
+	
+	public Double getLambda2star() {
+		return lambda2star;
+	}
+	
+	public Integer getValue() {
+		return value;
+	}
+	
+	public List<Integer> getP_negative() {
+		return p_negative;
+	}
+	
+	public List<Integer> getP_positive() {
+		return p_positive;
 	}
 }

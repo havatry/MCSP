@@ -26,4 +26,10 @@ public abstract class AbstractMCSPMethods extends AbstractCSPMethods{
 		}
 		return v2;
 	}
+	
+	public double getMinLoss(int[] Node, double[][] Id, int[][] IdLink, int start, int end) {
+		double[][] Id_sub = MCommon.copyArray(Id);
+		MCommon.swap(Id_sub, 3, 4);
+		return GetMinDelay(Node, Id_sub, IdLink, start, end);
+	}
 }
