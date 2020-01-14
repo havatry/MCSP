@@ -1,7 +1,9 @@
 package com.lt.multiAlg;
 
-import java.util.Arrays;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.lt.topology.MTopology;
 
@@ -14,15 +16,16 @@ import randomTopology.Constant;
  */
 public class Main {
 	private AbstractMCSPMethods abstractMCSPMethods;
-	private int start;
-	private int end;
+	private Integer start;
+	private Integer end;
+	private Integer delayConstraint;
+	private Integer lossConstraint;
 	private int callTime;
+	private static Logger log = LoggerFactory.getLogger(Main.class);
 	
 	public Main() {
 		//Created constructor stubs
 		abstractMCSPMethods = new MBiLAD();
-		start = 2;
-		end = 8;
 	}
 	
 	public double[] compute(String filename) {
@@ -39,10 +42,15 @@ public class Main {
 			Node[s] = s;
 		}
 		int[][] IdLink = IdFile.GetIdLink(Id);
+		// 设置
+		start = start == null ? 2 : start;
+		end = end == null ? 8 : end;
 		double minDelay = abstractMCSPMethods.GetMinDelay(Node, Id, IdLink, start, end);
 		double minLoss = abstractMCSPMethods.getMinLoss(Node, Id, IdLink, start, end);
-		int delayConstraint = (int)(minDelay + Math.random() * 5 + 1);
-		int lossConstraint = (int)(minLoss + Math.random() * 5 + 1);
+		delayConstraint = delayConstraint == null ? delayConstraint = (int)(minDelay + Math.random() * 10 + 1) : delayConstraint;
+		lossConstraint = lossConstraint== null ? (int)(minLoss + Math.random() * 10 + 1) : lossConstraint;
+		log.info("初始变量起点 = {}, 终点 = {}, 延时约束 = {}, 丢包约束 = {}, 节点个数 = {}",
+				new Object[] {start, end, delayConstraint, lossConstraint, 20});
 		abstractMCSPMethods.OptimalPath(Node, Id, IdLink, start, end, delayConstraint, lossConstraint);
 		double[] result = new double[3];
 		try {
@@ -50,7 +58,8 @@ public class Main {
 				MBiLAD mBiLAD = (MBiLAD)abstractMCSPMethods;
 				Integer v = mBiLAD.getValue();
 				if (v != null && v == 0) {
-					throw new Exception("MBiLAD can not find a path");
+//					throw new Exception("MBiLAD can not find a path");
+					log.info("MBiLAD can not find a path");
 				} else {
 					// 存在解
 					List<Integer> optimal_path = mBiLAD.getP_negative();
@@ -85,9 +94,29 @@ public class Main {
 		this.end = end;
 	}
 	
+	public void setDelayConstraint(Integer delayConstraint) {
+		this.delayConstraint = delayConstraint;
+	}
+	
+	public void setLossConstraint(Integer lossConstraint) {
+		this.lossConstraint = lossConstraint;
+	}
+	
 	public static void main(String[] args) {
 		Main main = new Main();
-		String filename = Constant.idFile.replace(".", "_" + 1 + ".");
-		System.out.println(Arrays.toString(main.compute(filename)));
+//		String filename = Constant.idFile.replace(".", "_" + 1 + ".");
+//		System.out.println(Arrays.toString(main.compute(filename)));
+		for (int i = 0; i < 100; i++) {
+			// 20个节点的
+			double[] result = main.compute(20);
+			if (result != null) {
+				log.info("运算结果: 代价 = {}, 延时 = {}, 丢包 = {}, 调用次数 = {}", new Object[] {result[0], result[1], result[2], main.callTime});
+			}
+			log.info("");
+			main.start = null;
+			main.end = null;
+			main.delayConstraint = null;
+			main.lossConstraint = null;
+		}
 	}
 }

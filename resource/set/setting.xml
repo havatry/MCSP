@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 设置程序所有信息 -->
+<allInfo> 
+  <node> 
+    <!-- 节点数 -->  
+    <number>20</number>  
+    <!-- 区域边长 -->  
+    <area>600</area>  
+    <!-- 核心节点的概率 -->  
+    <coreProbility>0.2</coreProbility>  
+    <!-- 核心节点与核心节点连边概率 -->  
+    <coreToCoreProbility>0.8</coreToCoreProbility>  
+    <!-- 核心节点与边缘节点连边概率 -->  
+    <coreToNormalProbility>0.1</coreToNormalProbility> 
+  </node>  
+  <!-- basePath是相对当前路径的基目录 -->  
+  <file basePath="resource/file/"> 
+    <!-- 节点输出文件名 -->  
+    <nodeFile>node.txt</nodeFile>  
+    <!-- 核心节点输出文件名 -->  
+    <coreNodeFile>coreNode.txt</coreNodeFile>  
+    <!-- 边连接信息输出文件名 -->  
+    <edgeFile>LinkInfo.txt</edgeFile>  
+    <!-- 链路输出文件名 -->  
+    <idFile>Id.txt</idFile>  
+    <!-- 当前目录下所有文件的特征输出文件名 -->  
+    <characteristicFile>ThisCharacteristic.txt</characteristicFile> 
+  </file>  
+  <input> 
+    <!-- 组数 -->  
+    <group>1</group>  
+    <!-- 每组的个数 -->  
+    <copy>10</copy>  
+    <!-- 每组之间相差的节点数 -->  
+    <step>20</step>  
+    <!-- 精度，用于比较浮点数的大小 -->  
+    <esp>0.0001</esp> 
+  </input>  
+  <program> 
+    <!-- 设置程序的一些固定参数，建议不要修改 -->  
+    <notExistsPathForValue>5000</notExistsPathForValue>  
+    <ExistsPathForValue>50000</ExistsPathForValue>  
+    <notExistsPathForYenKValue>1000</notExistsPathForYenKValue>  
+    <notExistsEdgeForValueOfYen>10000</notExistsEdgeForValueOfYen>  
+    <notExistsEdgeForValueOfBinary>10000</notExistsEdgeForValueOfBinary> 
+  </program>  
+  <test> 
+    <!-- 设置gama参数,请在程序中或者图形界面中自行设置，建议不要在此设置gama -->  
+    <gama>0.05</gama>  
+    <!-- 设置md参数 -->  
+    <md>0.2</md>  
+    <!-- 设置展示图形时最多显示节点数,超出则不予显示 -->  
+    <showMaxNode>100</showMaxNode>  
+    <!-- 是否对生成的Excel进行冻结窗口 -->  
+    <isFreeze>true</isFreeze>  
+    <!-- 如果选择Yen算法，是否执行自动关机操作 -->  
+    <shutdown>false</shutdown> 
+  </test> 
+</allInfo>
