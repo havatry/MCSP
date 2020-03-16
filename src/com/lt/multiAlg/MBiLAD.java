@@ -167,7 +167,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 				}
 			}
 		case 6:
-			MCommon.add(Id, 3, 5, 1, -lambda2); // reset
+			MCommon.add(Id, 3, 4, 1, -lambda2); // reset
 			if (MCommon.equal(v2_wave, v2)) {
 				log.info("v2波浪等于v2");
 				lambda1star = Math.abs(Math.tan(theta));
@@ -218,7 +218,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 		MCommon.swap(Id, 2, 4);
 		MCommon.add(Id, 2, 4, 1, lambda2);
 		List<Integer> pc = getPath(Node, Id, 0, start, end);
-		double f1_value = Ptheta(pc, Id, IdLink);
+		double f1_value = Ptheta(pc, Id, IdLink); // 这里可能出现链路矩阵返回-1的情况，从而报错数组下标异常
 		double f2_value = Ltheta(pc, Id, IdLink);
 		log.info("给定lambda2 = {}, 计算pc波浪 = {}, f1(pc波浪) = {}, f2(pc波浪) = {}, v2 = {}", 
 				new Object[]{lambda2, pc, f1_value, f2_value, v2});

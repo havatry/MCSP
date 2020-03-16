@@ -3,6 +3,8 @@ package com.lt.multiAlg;
 import cspAlgorithms.Common;
 import randomTopology.Constant;
 
+import java.util.Arrays;
+
 public class MCommon extends Common{
 	public static boolean great(double a, double b) {
 		return a - b > Constant.esp;
@@ -34,9 +36,9 @@ public class MCommon extends Common{
 	}
 	
 	public static void add(double[][] Id, int i, int j, double im, double jm) {
-		for (double[] dt : Id) {
-			dt[i] = im * dt[i] +  jm * dt[j];
-		}
+        for (double[] dt : Id) {
+            dt[i] = im * dt[i] + jm * dt[j];
+        }
 	}
 	
 	public static double[][] copyArray(double[][] origin) {
