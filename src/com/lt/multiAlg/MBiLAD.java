@@ -217,13 +217,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 		MCommon.swap(Id, 2, 4); // c f1 f2
 		MCommon.add(Id, 2, 4, 1, lambda2); // c + lamda2*f2 f1 f2
 		List<Integer> pc = getPath(Node, Id, 0, start, end);
-		double f1_value = 0.0;
-		try {
-            f1_value = Ptheta(pc, Id, IdLink); // 这里可能出现链路矩阵返回-1的情况，从而报错数组下标异常
-        }catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Exception");
-            System.exit(1);
-        }
+		double f1_value = Ptheta(pc, Id, IdLink); // 这里可能出现链路矩阵返回-1的情况，从而报错数组下标异常
 		double f2_value = Ltheta(pc, Id, IdLink);
 		// 撤销步骤5的改变, 因为步骤5可能会跳转到步骤4，然后再回到步骤5，这样会出现c+lambda1*f2的叠加
         MCommon.swap(Id, 2, 4);

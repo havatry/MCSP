@@ -59,11 +59,7 @@ public class DesignExcel {
                 cell.setCellStyle(style);
                 cell.setCellValue((Double)data[i]);
             } else {
-                try {
-                    row.createCell(i).setCellValue((Integer) data[i]);
-                } catch (ClassCastException e) {
-                    System.out.println(data);
-                }
+                row.createCell(i).setCellValue((Integer) data[i]);
             }
         }
     }

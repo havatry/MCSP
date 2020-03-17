@@ -1,6 +1,13 @@
 package com.lt.trail;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import com.lt.multiAlg.AbstractMCSPMethods;
@@ -138,7 +145,7 @@ public class Main {
 		this.lossConstraint = lossConstraint;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Main main = new Main();
 		if (SPEC) {
             Constant.WriteFile_TimeFor = 7;
@@ -147,9 +154,25 @@ public class Main {
         } else {
             for (int i = 0; i < 100; i++) {
                 // 20个节点的
-                double[] result = main.compute(20);
-                if (result != null) {
-                    log.info("运算结果: 代价 = {}, 延时 = {}, 丢包 = {}, 调用次数 = {}", new Object[]{result[0], result[1], result[2], main.callTime});
+                try {
+                    double[] result = main.compute(20);
+                    if (result != null) {
+                        log.info("运算结果: 代价 = {}, 延时 = {}, 丢包 = {}, 调用次数 = {}", new Object[]{result[0], result[1], result[2], main.callTime});
+                    }
+                } catch (Exception e) {
+                    System.err.println(e);
+                    // 文件转储
+                    String dirName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                    Files.createDirectory(Paths.get("resource/save/" + dirName));
+                    Files.copy(Paths.get("resource/file/id_" + Constant.TimeForTest + ".txt"),
+                            Paths.get("resource/save/" + dirName + "id_" + Constant.TimeForTest + ",txt"));
+                    // 保存上下文信息
+                    PrintWriter out = new PrintWriter("resource/save/" + dirName + "info_" + Constant.TimeForTest + ".txt");
+                    out.println("上下文信息");
+                    out.println("延时约束 = " + main.delayConstraint + ", 丢包约束 = " + main.lossConstraint);
+                    out.println("异常信息");
+                    out.println(e);
+                    out.close();
                 }
                 log.info("");
                 main.start = null;
