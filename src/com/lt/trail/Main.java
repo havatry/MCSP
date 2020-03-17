@@ -16,6 +16,8 @@ import randomTopology.Constant;
 
 /**
  * Test MBiLAD class
+ * 项目依赖的CSP.jar文件中关于djkstra两个方法前驱矩阵初始化为起点
+ * <br>当且仅当保证测试的拓扑结构是连通图时候，结果才是符合预期的
  * 2020年1月6日 下午11:34:39
  */
 public class Main {
@@ -58,7 +60,7 @@ public class Main {
         // 总边数
         int edgeNum = Id.length / 2;
         // 平均度
-        double averageDegree = AbstractMCSPMethods.getAverageDegree(Node, Id);
+        double averageDegree = AbstractMCSPMethods.getAverageDegree(Node, Id) * 2;
 		delayConstraint = delayConstraint == null ? delayConstraint = (int)(minDelay + Math.random() * 10 + 1) : delayConstraint;
 		lossConstraint = lossConstraint== null ? (int)(minLoss + Math.random() * 10 + 1) : lossConstraint;
 		log.info("初始变量,测试序号 = {}, 起点 = {}, 终点 = {}, 延时约束 = {}, 丢包约束 = {}, 节点个数 = {}",
@@ -79,7 +81,7 @@ public class Main {
                                 {Node.length, edgeNum, averageDegree,
                                         minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
                                         lossConstraint, -1, -1, -1,
-                                        callTime, executeTime});
+                                        -1, -1});
                     }
 				} else {
 					// 存在解
@@ -93,8 +95,8 @@ public class Main {
                         designExcel.writeData(Constant.WriteFile_TimeFor + 1, new Object[]
                                 {Node.length, edgeNum, averageDegree,
                                         minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
-                                        lossConstraint, result[0], result[1], result[2],
-                                        callTime, executeTime});
+                                        lossConstraint, (int)result[0], (int)result[1], (int)result[2],
+                                        callTime, (int)executeTime});
                     }
 					return result;
 				}
