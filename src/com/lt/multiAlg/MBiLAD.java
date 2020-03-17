@@ -1,12 +1,10 @@
 package com.lt.multiAlg;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import randomTopology.Constant;
+
+import java.util.List;
 
 /**
  * Main Algorithm
@@ -35,13 +33,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 	
 	@Override
 	public void OptimalPath(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2) { // integer can swap? not
-		//Created method stubs
 		origin = MCommon.copyArray(Id);
-//		log.info("初始链路矩阵 :");
-//		for (int i = 0; i < Id.length; i++) {
-//			log.info("\t{}", Arrays.toString(Id[i]));
-//		}
-//		log.info("起点 = {}, 终点 = {}", start, end);
 		compute(Node, Id, IdLink, start, end, v1, v2);
 	}
 	
@@ -52,7 +44,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 			value = 0;
 			return;
 		}
-		MCommon.swap(Id, 3, 4);
+		MCommon.swap(Id, 3, 4); // c f2 f1, 计算出f2的最小
 		List<Integer> p2 = getPath(Node, Id, Math.PI / 2, start, end);
 		log.info("执行第0步, 求得丢包最小的路径是 p2 = {}, 对应的丢包是f1(p2) = {}, 丢包约束v1 = {}", new Object[]{p2, Ptheta(p2, Id, IdLink), v2});
 		if (MCommon.great(Ptheta(p2, Id, IdLink), v2)) {
@@ -63,9 +55,9 @@ public class MBiLAD extends AbstractMCSPMethods{
 	}
 	
 	private void step_1(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2) {
-		List<Integer> pc = getPath(Node, Id, 0, start, end);
-		double f1_value = Ltheta(pc, Id, IdLink); // change
-		double f2_value = Ptheta(pc, Id, IdLink);
+		List<Integer> pc = getPath(Node, Id, 0, start, end); // c f2 f1, 计算出c最小
+		double f1_value = Ltheta(pc, Id, IdLink); // 计算出路径的延时f1
+		double f2_value = Ptheta(pc, Id, IdLink); // 计算出路径的丢包f2
 		log.info("执行第1步, 求得代价最小的路径是 pc = {}, 对应的延时是f1(pc) = {}, 对应的丢包是f2(pc) = {}, 延时约束v1 = {}, 丢包约束v2 = {}", 
 				new Object[]{pc, f1_value, f2_value, v1, v2});
 		if (MCommon.smallEqual(f1_value, v1) && MCommon.smallEqual(f2_value, v2)) {
@@ -74,7 +66,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 			return;
 		}
 		if (MCommon.great(f1_value, v1)) {
-			MCommon.swap(Id, 3, 4); // reset
+			MCommon.swap(Id, 3, 4); // reset, c f1 f2
 			step_2_3_6(Node, Id, IdLink, start, end, v1, v2, 2);
 		} else {
 			log.info("交换f1和f2 以及v1和v2");
@@ -87,9 +79,14 @@ public class MBiLAD extends AbstractMCSPMethods{
 		if (mode == 3) {
 			// f2 f1 c
 			MCommon.swap(Id, 2, 4);
-		}
-		ExtendBiLAD extendBiLAD = new ExtendBiLAD();
+		} else if (mode == 6) {
+		    // 步骤6只能从步骤5过来 而步骤的Id格式是f2 f1 c
+            MCommon.swap(Id, 2, 4); // c f1 f2
+            MCommon.add(Id, 2, 4, 1, lambda2); // c+lambda2*f2 f1 f2
+        }
+		ExtendBiLAD extendBiLAD = new ExtendBiLAD(); // c + lambda1*f1
 		extendBiLAD.OptimalPath(Node, Id, IdLink, v1, start, end);
+		CallDijkstraTime += extendBiLAD.getCallDijkstraTime();
 		List<List<Integer>> paths = extendBiLAD.getTwoPaths();
 		// 0 is positive and 1 is negative
 		if (paths == null || paths.size() < 2) {
@@ -167,7 +164,9 @@ public class MBiLAD extends AbstractMCSPMethods{
 				}
 			}
 		case 6:
-			MCommon.add(Id, 3, 4, 1, -lambda2); // reset
+		    // 撤销步骤的改变，因为其可能到步骤4然后步骤5，这样会出现Id矩阵的叠加
+            MCommon.swap(Id, 2, 4);
+            MCommon.add(Id, 2, 4, 1, -lambda2);
 			if (MCommon.equal(v2_wave, v2)) {
 				log.info("v2波浪等于v2");
 				lambda1star = Math.abs(Math.tan(theta));
@@ -215,11 +214,20 @@ public class MBiLAD extends AbstractMCSPMethods{
 	
 	
 	private void step_5(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2) {
-		MCommon.swap(Id, 2, 4);
-		MCommon.add(Id, 2, 4, 1, lambda2);
+		MCommon.swap(Id, 2, 4); // c f1 f2
+		MCommon.add(Id, 2, 4, 1, lambda2); // c + lamda2*f2 f1 f2
 		List<Integer> pc = getPath(Node, Id, 0, start, end);
-		double f1_value = Ptheta(pc, Id, IdLink); // 这里可能出现链路矩阵返回-1的情况，从而报错数组下标异常
+		double f1_value = 0.0;
+		try {
+            f1_value = Ptheta(pc, Id, IdLink); // 这里可能出现链路矩阵返回-1的情况，从而报错数组下标异常
+        }catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Exception");
+            System.exit(1);
+        }
 		double f2_value = Ltheta(pc, Id, IdLink);
+		// 撤销步骤5的改变, 因为步骤5可能会跳转到步骤4，然后再回到步骤5，这样会出现c+lambda1*f2的叠加
+        MCommon.swap(Id, 2, 4);
+        MCommon.add(Id, 2, 4, 1, -lambda2); // c f1 f2
 		log.info("给定lambda2 = {}, 计算pc波浪 = {}, f1(pc波浪) = {}, f2(pc波浪) = {}, v2 = {}", 
 				new Object[]{lambda2, pc, f1_value, f2_value, v2});
 		if (MCommon.smallEqual(f1_value, v1)) {
@@ -255,8 +263,8 @@ public class MBiLAD extends AbstractMCSPMethods{
 			lambda2 = Math.abs(Math.tan(delta));
 		}
 	}
-	
-	// get methods
+
+    // get methods
 	public Double getLambda1star() {
 		return lambda1star;
 	}

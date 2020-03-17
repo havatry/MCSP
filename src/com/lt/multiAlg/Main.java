@@ -22,13 +22,13 @@ public class Main {
 	private Integer lossConstraint;
 	private int callTime;
 	private static Logger log = LoggerFactory.getLogger(Main.class);
-	
-	public Main() {
-		//Created constructor stubs
-		abstractMCSPMethods = new MBiLAD();
-	}
-	
-	public double[] compute(String filename) {
+	private final static boolean SPEC = false;
+
+    /**
+     * 对算例进行测试， 一般需要指定Write_TimeFor的变量来测试特定文件
+     * @return 测试结果
+     */
+	public double[] compute() {
 		// 指定文件
 		double[][] Id = IdFile.GetId(true);
 		double maxIndex = -1;
@@ -43,14 +43,15 @@ public class Main {
 		}
 		int[][] IdLink = IdFile.GetIdLink(Id);
 		// 设置
+        abstractMCSPMethods = new MBiLAD();
 		start = start == null ? 2 : start;
 		end = end == null ? 8 : end;
 		double minDelay = abstractMCSPMethods.GetMinDelay(Node, Id, IdLink, start, end);
 		double minLoss = abstractMCSPMethods.getMinLoss(Node, Id, IdLink, start, end);
 		delayConstraint = delayConstraint == null ? delayConstraint = (int)(minDelay + Math.random() * 10 + 1) : delayConstraint;
 		lossConstraint = lossConstraint== null ? (int)(minLoss + Math.random() * 10 + 1) : lossConstraint;
-		log.info("初始变量起点 = {}, 终点 = {}, 延时约束 = {}, 丢包约束 = {}, 节点个数 = {}",
-				new Object[] {start, end, delayConstraint, lossConstraint, 20});
+		log.info("初始变量,测试序号 = {}, 起点 = {}, 终点 = {}, 延时约束 = {}, 丢包约束 = {}, 节点个数 = {}",
+				new Object[] {Constant.WriteFile_TimeFor, start, end, delayConstraint, lossConstraint, 20});
 		abstractMCSPMethods.OptimalPath(Node, Id, IdLink, start, end, delayConstraint, lossConstraint);
 		double[] result = new double[3];
 		try {
@@ -66,6 +67,7 @@ public class Main {
 					result[0] = mBiLAD.Ctheta(optimal_path, Id, IdLink);
 					result[1] = mBiLAD.Ptheta(optimal_path, Id, IdLink);
 					result[2] = mBiLAD.Ltheta(optimal_path, Id, IdLink);
+					callTime = abstractMCSPMethods.getCallDijkstraTime();
 					return result;
 				}
 			}
@@ -74,12 +76,16 @@ public class Main {
 		}
 		return null;
 	}
-	
+
+    /**
+     * 构造算例
+     * @param nodeNum 算例的节点数
+     * @return 对算例的计算结果
+     */
 	public double[] compute(Integer nodeNum) {
 		Constant.step = (Constant.numNodes = nodeNum);
 		new MTopology().ProduceTopology();
-		String filename = Constant.idFile.replace(".", "_" + Constant.WriteFile_TimeFor + ".");
-		return compute(filename);
+		return compute();
 	}
 	
 	public int getCallTime() {
@@ -104,19 +110,24 @@ public class Main {
 	
 	public static void main(String[] args) {
 		Main main = new Main();
-//		String filename = Constant.idFile.replace(".", "_" + 1 + ".");
-//		System.out.println(Arrays.toString(main.compute(filename)));
-		for (int i = 0; i < 100; i++) {
-			// 20个节点的
-			double[] result = main.compute(20);
-			if (result != null) {
-				log.info("运算结果: 代价 = {}, 延时 = {}, 丢包 = {}, 调用次数 = {}", new Object[] {result[0], result[1], result[2], main.callTime});
-			}
-			log.info("");
-			main.start = null;
-			main.end = null;
-			main.delayConstraint = null;
-			main.lossConstraint = null;
-		}
+		if (SPEC) {
+            Constant.WriteFile_TimeFor = 7;
+            main.compute();
+            System.out.println(main.callTime);
+        } else {
+            for (int i = 0; i < 100; i++) {
+                // 20个节点的
+                double[] result = main.compute(20);
+                if (result != null) {
+                    log.info("运算结果: 代价 = {}, 延时 = {}, 丢包 = {}, 调用次数 = {}", new Object[]{result[0], result[1], result[2], main.callTime});
+                }
+                log.info("");
+                main.start = null;
+                main.end = null;
+                main.delayConstraint = null;
+                main.lossConstraint = null;
+                Constant.WriteFile_TimeFor++;
+            }
+        }
 	}
 }
