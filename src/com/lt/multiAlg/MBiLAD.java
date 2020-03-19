@@ -40,14 +40,14 @@ public class MBiLAD extends AbstractMCSPMethods{
 	private void compute(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2) {
 		List<Integer> p1 = getPath(Node, Id, Math.PI / 2, start, end);
 		log.info("执行第0步, 求得延时最小的路径是 p1 = {}, 对应的延时是f1(p1) = {}, 延时约束v1 = {}", new Object[]{p1, Ptheta(p1, Id, IdLink), v1});
-		if (MCommon.great(Ptheta(p1, Id, IdLink), v1)) {
+		if (MCommon.great(Ptheta(p1, origin, IdLink), v1)) {
 			value = 0;
 			return;
 		}
 		MCommon.swap(Id, 3, 4); // c f2 f1, 计算出f2的最小
 		List<Integer> p2 = getPath(Node, Id, Math.PI / 2, start, end);
 		log.info("执行第0步, 求得丢包最小的路径是 p2 = {}, 对应的丢包是f1(p2) = {}, 丢包约束v1 = {}", new Object[]{p2, Ptheta(p2, Id, IdLink), v2});
-		if (MCommon.great(Ptheta(p2, Id, IdLink), v2)) {
+		if (MCommon.great(Ptheta(p2, origin, IdLink), v2)) {
 			value = 0;
 			return;
 		}
@@ -56,8 +56,8 @@ public class MBiLAD extends AbstractMCSPMethods{
 	
 	private void step_1(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2) {
 		List<Integer> pc = getPath(Node, Id, 0, start, end); // c f2 f1, 计算出c最小
-		double f1_value = Ltheta(pc, Id, IdLink); // 计算出路径的延时f1
-		double f2_value = Ptheta(pc, Id, IdLink); // 计算出路径的丢包f2
+		double f1_value = Ltheta(pc, origin, IdLink); // 计算出路径的延时f1
+		double f2_value = Ptheta(pc, origin, IdLink); // 计算出路径的丢包f2
 		log.info("执行第1步, 求得代价最小的路径是 pc = {}, 对应的延时是f1(pc) = {}, 对应的丢包是f2(pc) = {}, 延时约束v1 = {}, 丢包约束v2 = {}", 
 				new Object[]{pc, f1_value, f2_value, v1, v2});
 		if (MCommon.smallEqual(f1_value, v1) && MCommon.smallEqual(f2_value, v2)) {
@@ -70,6 +70,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 			step_2_3_6(Node, Id, IdLink, start, end, v1, v2, 2);
 		} else {
 			log.info("交换f1和f2 以及v1和v2");
+			MCommon.swap(origin, 3, 4);
 			step_2_3_6(Node, Id, IdLink, start, end, v2, v1, 2);
 		}
 	}
@@ -93,15 +94,15 @@ public class MBiLAD extends AbstractMCSPMethods{
 			value = 0;
 			return;
 		}
-		double f1_value = Ptheta(paths.get(0), Id, IdLink); // +
-		double f2_value = Ptheta(paths.get(1), Id, IdLink); // -
+		double f1_value = Ptheta(paths.get(0), origin, IdLink); // +
+		double f2_value = Ptheta(paths.get(1), origin, IdLink); // -
 		double alpha = 0;
 		log.info("调用BiLAD算法求的两个路径和lambda分别是, lambda1 = {}, p+ = {}, p- = {}, f1(p+) = {}, f1(p-) = {}, v2 = {}",
 				new Object[]{Math.abs(Math.tan(extendBiLAD.getTheta())), paths.get(0), paths.get(1), f1_value, f2_value, v2});
 		if (!MCommon.equal(f1_value, f2_value)) {
 			alpha = (v1 - f2_value) / (f1_value - f2_value);
 		}
-		double v2_wave = (1 - alpha) * Ltheta(paths.get(1), Id, IdLink) + alpha * Ltheta(paths.get(0), Id, IdLink);
+		double v2_wave = (1 - alpha) * Ltheta(paths.get(1), origin, IdLink) + alpha * Ltheta(paths.get(0), origin, IdLink);
 		log.info("求得alpha = {}, v2波浪= {}", new Object[]{alpha, v2_wave});
 		switch (mode) {
 		case 2:
@@ -121,7 +122,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 				p_below_negative = paths.get(1);
 				p_below_postive = paths.get(0);
 				v2_positive = v2_wave;
-				c_positive = (1 - alpha) * Ctheta(paths.get(1), Id, IdLink) + alpha * Ctheta(paths.get(0), Id, IdLink);
+				c_positive = (1 - alpha) * Ctheta(paths.get(1), origin, IdLink) + alpha * Ctheta(paths.get(0), origin, IdLink);
 				log.info("初始化delta_below = {}, p-_below = {}, p+_below = {}, v2+ = {}, c+ = {}, 进入第3步",
 						new Object[]{0, p_below_negative, p_below_postive, v2_positive, c_positive});
 				step_2_3_6(Node, Id, IdLink, start, end, v1, v2, 3);
@@ -139,7 +140,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 				p_top_negative = paths.get(1);
 				p_top_positive = paths.get(0);
 				v2_negative = v2_wave;
-				c_negative = (1 - alpha) * Ltheta(paths.get(1), Id, IdLink) + alpha * Ltheta(paths.get(0), Id, IdLink);
+				c_negative = (1 - alpha) * Ltheta(paths.get(1), origin, IdLink) + alpha * Ltheta(paths.get(0), origin, IdLink);
 				value = 1;
 				lambda1star = Math.abs(Math.tan(theta));
 				log.info("初始化delta_top = {}, p-_top = {}, p+_top = {}, v2- = {}, c- = {}, 进入第4步", 
@@ -190,7 +191,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 				p_below_negative = paths.get(1);
 				p_below_postive = paths.get(0);
 				v2_positive = v2_wave;
-				c_positive = (1 - alpha) * Ctheta(paths.get(1), Id, IdLink) + alpha * Ctheta(paths.get(0), Id, IdLink);
+				c_positive = (1 - alpha) * Ctheta(paths.get(1), origin, IdLink) + alpha * Ctheta(paths.get(0), origin, IdLink);
 				log.info("设置delta_below = {}, p-_below = {}, p+_below = {}, v2+ = {}, c+ = {}, 进入第4步",
 						new Object[] {delta, p_below_negative, p_below_postive, v2_positive, c_positive});
 			}
@@ -217,8 +218,8 @@ public class MBiLAD extends AbstractMCSPMethods{
 		MCommon.swap(Id, 2, 4); // c f1 f2
 		MCommon.add(Id, 2, 4, 1, lambda2); // c + lamda2*f2 f1 f2
 		List<Integer> pc = getPath(Node, Id, 0, start, end);
-		double f1_value = Ptheta(pc, Id, IdLink); // 这里可能出现链路矩阵返回-1的情况，从而报错数组下标异常
-		double f2_value = Ltheta(pc, Id, IdLink);
+		double f1_value = Ptheta(pc, origin, IdLink); // 这里可能出现链路矩阵返回-1的情况，从而报错数组下标异常
+		double f2_value = Ltheta(pc, origin, IdLink);
 		// 撤销步骤5的改变, 因为步骤5可能会跳转到步骤4，然后再回到步骤5，这样会出现c+lambda1*f2的叠加
         MCommon.swap(Id, 2, 4);
         MCommon.add(Id, 2, 4, 1, -lambda2); // c f1 f2

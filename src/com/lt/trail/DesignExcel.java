@@ -30,7 +30,7 @@ public class DesignExcel {
         sheet.createRow(0).createCell(9).setCellValue("MBiLAD");
         CellRangeAddress address = new CellRangeAddress(0, 0, 9, 14);
         sheet.addMergedRegion(address); // 合并MBiLAD
-        CellRangeAddress address2 = new CellRangeAddress(0, 0, 14, 18);
+        CellRangeAddress address2 = new CellRangeAddress(0, 0, 15, 19);
         sheet.addMergedRegion(address2); // 合并YEN
         // 第二行
         HSSFRow row = sheet.createRow(1);

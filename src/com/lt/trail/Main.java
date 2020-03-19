@@ -112,9 +112,9 @@ public class Main {
 				} else {
 					// 存在解
 					List<Integer> optimal_path = mBiLAD.getP_negative();
-					result[0] = mBiLAD.Ctheta(optimal_path, Id, IdLink);
-					result[1] = mBiLAD.Ptheta(optimal_path, Id, IdLink);
-					result[2] = mBiLAD.Ltheta(optimal_path, Id, IdLink);
+					result[0] = mBiLAD.Ctheta(optimal_path, origin, IdLink);
+					result[1] = mBiLAD.Ptheta(optimal_path, origin, IdLink);
+					result[2] = mBiLAD.Ltheta(optimal_path, origin, IdLink);
 					callTime = abstractMCSPMethods.getCallDijkstraTime();
 					// 写入
                     if (!SPEC) {
@@ -167,12 +167,12 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Main main = new Main();
 		if (SPEC) {
-            String dirName = "20200320011054"; // 指定
+            String dirName = "20200320021019"; // 指定
             int index = Constant.idFile.lastIndexOf("/");
             Constant.idFile = Constant.idFile.substring(0, index) + "/" + dirName + Constant.idFile.substring(index);
-            Constant.TimeForTest = 14; // 指定
-            main.delayConstraint = 26; // 指定
-            main.lossConstraint = 33; // 指定
+            Constant.TimeForTest = 34; // 指定
+            main.delayConstraint = 21; // 指定
+            main.lossConstraint = 24; // 指定
             main.compute();
             System.out.println(main.callTime);
         } else {
@@ -193,10 +193,10 @@ public class Main {
                     if (!Files.exists(Paths.get("resource/save/" + dirName))) {
                         Files.createDirectory(Paths.get("resource/save/" + dirName));
                     }
-                    Files.copy(Paths.get("resource/file/id_" + Constant.TimeForTest + ".txt"),
+                    Files.copy(Paths.get("resource/file/" + dirName + "/id_" + Constant.TimeForTest + ".txt"),
                             Paths.get("resource/save/" + dirName + "id_" + Constant.TimeForTest + ",txt"));
                     // 保存上下文信息
-                    PrintWriter out = new PrintWriter("resource/save/" + dirName + "_info_" + Constant.TimeForTest + ".txt");
+                    PrintWriter out = new PrintWriter("resource/save/" + dirName + "/some_info_" + Constant.TimeForTest + ".txt");
                     out.println("上下文信息");
                     out.println("延时约束 = " + main.delayConstraint + ", 丢包约束 = " + main.lossConstraint);
                     out.println("异常信息");
