@@ -38,8 +38,9 @@ public class MDijkstra extends Dijkstra{
 //			double ps = Common.Ptheta(shortestPath, Id, IdLink);
             double ps = Common.Ptheta(shortestPath, Id, IdLink);
             double ls = MCommon.Ltheta(shortestPath, Id, IdLink);
-			if((ps < v1 + Constant.esp && v1 - Constant.esp < ps)
-					&& (ls < v2 + Constant.esp && v2 - Constant.esp < ls)) {
+            // 判断条件要修改
+			if(MCommon.smallEqual(ps, v1)
+					&& MCommon.smallEqual(ls, v2)) {
 				return shortestPath;
 			}
 			

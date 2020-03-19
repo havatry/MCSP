@@ -167,13 +167,18 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Main main = new Main();
 		if (SPEC) {
-            Constant.WriteFile_TimeFor = 7;
+            String dirName = "20200320005431"; // 指定
+            int index = Constant.idFile.lastIndexOf("/");
+            Constant.idFile = Constant.idFile.substring(0, index) + "/" + dirName + Constant.idFile.substring(index);
+            Constant.TimeForTest = 8; // 指定
+            main.delayConstraint = 18; // 指定
+            main.lossConstraint = 17; // 指定
             main.compute();
             System.out.println(main.callTime);
         } else {
             String dirName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             int index = Constant.idFile.lastIndexOf("/");
-            Constant.idFile = Constant.idFile.substring(0, index) + File.separator + dirName + Constant.idFile.substring(index);
+            Constant.idFile = Constant.idFile.substring(0, index) + "/" + dirName + Constant.idFile.substring(index);
             Files.createDirectory(Paths.get(Constant.idFile).getParent());
             for (int i = 0; i < 100; i++) {
                 // 20个节点的
@@ -206,7 +211,7 @@ public class Main {
                 Constant.WriteFile_TimeFor++;
                 Constant.TimeForTest++;
             }
-            main.designExcel.close();
         }
+        main.designExcel.close(); // 对于仅测试不写入excel的也需要进行关闭
 	}
 }
