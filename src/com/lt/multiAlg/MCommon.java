@@ -4,6 +4,7 @@ import cspAlgorithms.Common;
 import randomTopology.Constant;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class MCommon extends Common{
 	public static boolean great(double a, double b) {
@@ -51,4 +52,16 @@ public class MCommon extends Common{
 		}
 		return sub;
 	}
+
+    public static double Ltheta(List<Integer> path, double[][] Id, int[][] IdLink) {
+        //Created method stubs
+        double v2 = 0;
+        for (int i = path.size() - 1; i >= 1; i--) {
+            int startOfPath = path.get(i);
+            int nextOfPath = path.get(i - 1);
+            int id = IdLink[startOfPath][nextOfPath];
+            v2 += Id[id][4];
+        }
+        return v2;
+    }
 }

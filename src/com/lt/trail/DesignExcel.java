@@ -29,7 +29,9 @@ public class DesignExcel {
         // 第一行
         sheet.createRow(0).createCell(9).setCellValue("MBiLAD");
         CellRangeAddress address = new CellRangeAddress(0, 0, 9, 13);
-        sheet.addMergedRegion(address); // 第一行将MBiLAD
+        sheet.addMergedRegion(address); // 合并MBiLAD
+        CellRangeAddress address2 = new CellRangeAddress(0, 0, 14, 18);
+        sheet.addMergedRegion(address2); // 合并YEN
         // 第二行
         HSSFRow row = sheet.createRow(1);
         row.createCell(0).setCellValue("节点数");
@@ -44,8 +46,14 @@ public class DesignExcel {
         row.createCell(9).setCellValue("c");
         row.createCell(10).setCellValue("d");
         row.createCell(11).setCellValue("l");
-        row.createCell(12).setCellValue("调用次数");
-        row.createCell(13).setCellValue("运行时间/ms");
+        row.createCell(12).setCellValue("退出标记");
+        row.createCell(13).setCellValue("调用次数");
+        row.createCell(14).setCellValue("运行时间/ms");
+        row.createCell(15).setCellValue("c");
+        row.createCell(16).setCellValue("d");
+        row.createCell(17).setCellValue("l");
+        row.createCell(18).setCellValue("调用次数");
+        row.createCell(19).setCellValue("运行时间/ms");
     }
 
     // 向excel中写入数据

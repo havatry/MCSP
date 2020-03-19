@@ -1,5 +1,6 @@
 package com.lt.trail;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import com.lt.multiAlg.AbstractMCSPMethods;
 import com.lt.multiAlg.MBiLAD;
+import com.lt.multiAlg.MDijkstra;
 import cspAlgorithms.Common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +47,10 @@ public class Main {
 	public double[] compute() {
 		// 指定文件
 		double[][] Id = IdFile.GetId(true);
+		double[][] origin = new double[Id.length][];
+		for (int i = 0; i < Id.length; i++) {
+		    origin[i] = Id[i].clone();
+        }
 		double maxIndex = -1;
 		for (double[] d : Id) {
 			if (Math.max(d[0], d[1]) > maxIndex) {
@@ -76,6 +82,19 @@ public class Main {
 		abstractMCSPMethods.OptimalPath(Node, Id, IdLink, start, end, delayConstraint, lossConstraint);
 		long executeTime = System.currentTimeMillis() - startTime;
 		double[] result = new double[3];
+		startTime = System.currentTimeMillis();
+		// 执行YEN
+        MDijkstra mDijkstra = new MDijkstra();
+        List<Integer> pathYen = mDijkstra.YenFindPath(Node, Common.getEdge(Node, origin, IdLink, 0.0D),
+                origin, IdLink, start, end, delayConstraint, lossConstraint);
+        int execteTime2 = (int) (System.currentTimeMillis() - startTime);
+        int yc = -1, yd = -1, yl = -1;
+        if (pathYen != null) {
+            yc = (int) Common.Ctheta(pathYen, origin, IdLink);
+            yd = (int) Common.Ptheta(pathYen, origin, IdLink);
+            yl = (int) abstractMCSPMethods.Ltheta(pathYen, origin, IdLink);
+        }
+        int callTime2 = mDijkstra.getCallDijkstraTime();
 		try {
 			if (abstractMCSPMethods instanceof MBiLAD) {
 				MBiLAD mBiLAD = (MBiLAD)abstractMCSPMethods;
@@ -87,8 +106,8 @@ public class Main {
                         designExcel.writeData(Constant.WriteFile_TimeFor + 1, new Object[]
                                 {Node.length, edgeNum, averageDegree,
                                         minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
-                                        lossConstraint, -1, -1, -1,
-                                        -1, -1});
+                                        lossConstraint, -1, -1, -1, ((MBiLAD) abstractMCSPMethods).getValue(),
+                                        callTime, (int)executeTime, yc, yd, yl, execteTime2, callTime2});
                     }
 				} else {
 					// 存在解
@@ -102,8 +121,8 @@ public class Main {
                         designExcel.writeData(Constant.WriteFile_TimeFor + 1, new Object[]
                                 {Node.length, edgeNum, averageDegree,
                                         minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
-                                        lossConstraint, (int)result[0], (int)result[1], (int)result[2],
-                                        callTime, (int)executeTime});
+                                        lossConstraint, (int)result[0], (int)result[1], (int)result[2], ((MBiLAD) abstractMCSPMethods).getValue(),
+                                        callTime, (int)executeTime, yc, yd, yl, execteTime2, callTime2});
                     }
 					return result;
 				}
@@ -152,6 +171,10 @@ public class Main {
             main.compute();
             System.out.println(main.callTime);
         } else {
+            String dirName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            int index = Constant.idFile.lastIndexOf("/");
+            Constant.idFile = Constant.idFile.substring(0, index) + File.separator + dirName + Constant.idFile.substring(index);
+            Files.createDirectory(Paths.get(Constant.idFile).getParent());
             for (int i = 0; i < 100; i++) {
                 // 20个节点的
                 try {
@@ -162,12 +185,13 @@ public class Main {
                 } catch (Exception e) {
                     System.err.println(e);
                     // 文件转储
-                    String dirName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-                    Files.createDirectory(Paths.get("resource/save/" + dirName));
+                    if (!Files.exists(Paths.get("resource/save/" + dirName))) {
+                        Files.createDirectory(Paths.get("resource/save/" + dirName));
+                    }
                     Files.copy(Paths.get("resource/file/id_" + Constant.TimeForTest + ".txt"),
                             Paths.get("resource/save/" + dirName + "id_" + Constant.TimeForTest + ",txt"));
                     // 保存上下文信息
-                    PrintWriter out = new PrintWriter("resource/save/" + dirName + "info_" + Constant.TimeForTest + ".txt");
+                    PrintWriter out = new PrintWriter("resource/save/" + dirName + "_info_" + Constant.TimeForTest + ".txt");
                     out.println("上下文信息");
                     out.println("延时约束 = " + main.delayConstraint + ", 丢包约束 = " + main.lossConstraint);
                     out.println("异常信息");

@@ -33,11 +33,13 @@ public class MDijkstra extends Dijkstra{
 			A.add(shortestPath);// 第一个无争议地定下来的路径
 			if (A.size() >= Constant.notExistsPathForYenKValue)
 				return null;// 视为不存在路径，因为该方法最多求给定的一万条路径
-			// 核心判断
-			double cs = Common.Ctheta(shortestPath, Id, IdLink);
-			double ps = Common.Ptheta(shortestPath, Id, IdLink);
-			if((cs < v1 + Constant.esp && v1 - Constant.esp < cs)
-					&& (ps < v2 + Constant.esp && v2 - Constant.esp < ps)) {
+			// 核心判断 (修正比较的是f1和f2, 之前比较的是c和f1)
+//			double cs = Common.Ctheta(shortestPath, Id, IdLink);
+//			double ps = Common.Ptheta(shortestPath, Id, IdLink);
+            double ps = Common.Ptheta(shortestPath, Id, IdLink);
+            double ls = MCommon.Ltheta(shortestPath, Id, IdLink);
+			if((ps < v1 + Constant.esp && v1 - Constant.esp < ps)
+					&& (ls < v2 + Constant.esp && v2 - Constant.esp < ls)) {
 				return shortestPath;
 			}
 			
