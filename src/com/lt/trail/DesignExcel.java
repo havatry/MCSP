@@ -28,7 +28,7 @@ public class DesignExcel {
     private void init() {
         // 第一行
         sheet.createRow(0).createCell(9).setCellValue("MBiLAD");
-        CellRangeAddress address = new CellRangeAddress(0, 0, 9, 13);
+        CellRangeAddress address = new CellRangeAddress(0, 0, 9, 14);
         sheet.addMergedRegion(address); // 合并MBiLAD
         CellRangeAddress address2 = new CellRangeAddress(0, 0, 14, 18);
         sheet.addMergedRegion(address2); // 合并YEN

@@ -38,7 +38,7 @@ public class Main {
 	private int callTime;
 	private DesignExcel designExcel = new DesignExcel();
 	private static Logger log = LoggerFactory.getLogger(Main.class);
-	private final static boolean SPEC = false;
+	private final static boolean SPEC = true;
 
     /**
      * 对算例进行测试， 一般需要指定Write_TimeFor的变量来测试特定文件
@@ -107,7 +107,7 @@ public class Main {
                                 {Node.length, edgeNum, averageDegree,
                                         minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
                                         lossConstraint, -1, -1, -1, ((MBiLAD) abstractMCSPMethods).getValue(),
-                                        callTime, (int)executeTime, yc, yd, yl, execteTime2, callTime2});
+                                        callTime, (int)executeTime, yc, yd, yl, callTime2, execteTime2});
                     }
 				} else {
 					// 存在解
@@ -122,7 +122,7 @@ public class Main {
                                 {Node.length, edgeNum, averageDegree,
                                         minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
                                         lossConstraint, (int)result[0], (int)result[1], (int)result[2], ((MBiLAD) abstractMCSPMethods).getValue(),
-                                        callTime, (int)executeTime, yc, yd, yl, execteTime2, callTime2});
+                                        callTime, (int)executeTime, yc, yd, yl, callTime2, execteTime2});
                     }
 					return result;
 				}
@@ -167,12 +167,12 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Main main = new Main();
 		if (SPEC) {
-            String dirName = "20200320005431"; // 指定
+            String dirName = "20200320011054"; // 指定
             int index = Constant.idFile.lastIndexOf("/");
             Constant.idFile = Constant.idFile.substring(0, index) + "/" + dirName + Constant.idFile.substring(index);
-            Constant.TimeForTest = 8; // 指定
-            main.delayConstraint = 18; // 指定
-            main.lossConstraint = 17; // 指定
+            Constant.TimeForTest = 14; // 指定
+            main.delayConstraint = 26; // 指定
+            main.lossConstraint = 33; // 指定
             main.compute();
             System.out.println(main.callTime);
         } else {

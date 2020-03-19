@@ -31,7 +31,7 @@ public class MDijkstra extends Dijkstra{
 
 			double MAX_NUMBER = Constant.ExistsPathForValue;// 用于筛选最短路径，依据具体情况调整
 			A.add(shortestPath);// 第一个无争议地定下来的路径
-			if (A.size() >= Constant.notExistsPathForYenKValue)
+			if (A.size() >= Constant.notExistsPathForYenKValue) // 这里是指A容器中的路径数达到1000 实际上每次加个路径调用idjkstra次数比较多不止一次
 				return null;// 视为不存在路径，因为该方法最多求给定的一万条路径
 			// 核心判断 (修正比较的是f1和f2, 之前比较的是c和f1)
 //			double cs = Common.Ctheta(shortestPath, Id, IdLink);
