@@ -47,7 +47,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 		MCommon.swap(Id, 3, 4); // c f2 f1, 计算出f2的最小
 		List<Integer> p2 = getPath(Node, Id, Math.PI / 2, start, end);
 		log.info("执行第0步, 求得丢包最小的路径是 p2 = {}, 对应的丢包是f1(p2) = {}, 丢包约束v1 = {}", new Object[]{p2, Ptheta(p2, Id, IdLink), v2});
-		if (MCommon.great(Ptheta(p2, origin, IdLink), v2)) {
+		if (MCommon.great(Ltheta(p2, origin, IdLink), v2)) {
 			value = 0;
 			return;
 		}
@@ -56,8 +56,11 @@ public class MBiLAD extends AbstractMCSPMethods{
 	
 	private void step_1(int[] Node, double[][] Id, int[][] IdLink, int start, int end, int v1, int v2) {
 		List<Integer> pc = getPath(Node, Id, 0, start, end); // c f2 f1, 计算出c最小
-		double f1_value = Ltheta(pc, origin, IdLink); // 计算出路径的延时f1
-		double f2_value = Ptheta(pc, origin, IdLink); // 计算出路径的丢包f2
+//		double f1_value = Ltheta(pc, origin, IdLink); // 计算出路径的延时f1
+//		double f2_value = Ptheta(pc, origin, IdLink); // 计算出路径的丢包f2
+        // 由于使用origin 因此这里换Ptheta和Lthea顺序
+        double f1_value = Ptheta(pc, origin, IdLink); // 计算出路径的延时f1
+		double f2_value = Ltheta(pc, origin, IdLink); // 计算出路径的丢包f2
 		log.info("执行第1步, 求得代价最小的路径是 pc = {}, 对应的延时是f1(pc) = {}, 对应的丢包是f2(pc) = {}, 延时约束v1 = {}, 丢包约束v2 = {}", 
 				new Object[]{pc, f1_value, f2_value, v1, v2});
 		if (MCommon.smallEqual(f1_value, v1) && MCommon.smallEqual(f2_value, v2)) {
@@ -95,7 +98,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 			return;
 		}
 		double f1_value = Ptheta(paths.get(0), origin, IdLink); // +
-		double f2_value = Ptheta(paths.get(1), origin, IdLink); // -
+		double f2_value = Ltheta(paths.get(1), origin, IdLink); // -
 		double alpha = 0;
 		log.info("调用BiLAD算法求的两个路径和lambda分别是, lambda1 = {}, p+ = {}, p- = {}, f1(p+) = {}, f1(p-) = {}, v2 = {}",
 				new Object[]{Math.abs(Math.tan(extendBiLAD.getTheta())), paths.get(0), paths.get(1), f1_value, f2_value, v2});
@@ -140,7 +143,7 @@ public class MBiLAD extends AbstractMCSPMethods{
 				p_top_negative = paths.get(1);
 				p_top_positive = paths.get(0);
 				v2_negative = v2_wave;
-				c_negative = (1 - alpha) * Ltheta(paths.get(1), origin, IdLink) + alpha * Ltheta(paths.get(0), origin, IdLink);
+				c_negative = (1 - alpha) * Ctheta(paths.get(1), origin, IdLink) + alpha * Ctheta(paths.get(0), origin, IdLink);
 				value = 1;
 				lambda1star = Math.abs(Math.tan(theta));
 				log.info("初始化delta_top = {}, p-_top = {}, p+_top = {}, v2- = {}, c- = {}, 进入第4步", 
@@ -281,4 +284,8 @@ public class MBiLAD extends AbstractMCSPMethods{
 	public List<Integer> getP_positive() {
 		return p_positive;
 	}
+
+    public double[][] getOrigin() {
+        return origin;
+    }
 }

@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class Main {
 	private int callTime;
 	private DesignExcel designExcel = new DesignExcel();
 	private static Logger log = LoggerFactory.getLogger(Main.class);
-	private final static boolean SPEC = false;
+	private final static boolean SPEC = true;
 
     /**
      * 对算例进行测试， 一般需要指定Write_TimeFor的变量来测试特定文件
@@ -112,9 +113,10 @@ public class Main {
 				} else {
 					// 存在解
 					List<Integer> optimal_path = mBiLAD.getP_negative();
-					result[0] = mBiLAD.Ctheta(optimal_path, origin, IdLink);
-					result[1] = mBiLAD.Ptheta(optimal_path, origin, IdLink);
-					result[2] = mBiLAD.Ltheta(optimal_path, origin, IdLink);
+					double[][] temp = mBiLAD.getOrigin();
+					result[0] = mBiLAD.Ctheta(optimal_path, temp, IdLink);
+					result[1] = mBiLAD.Ptheta(optimal_path, temp, IdLink);
+					result[2] = mBiLAD.Ltheta(optimal_path, temp, IdLink);
 					callTime = abstractMCSPMethods.getCallDijkstraTime();
 					// 写入
                     if (!SPEC) {
@@ -167,14 +169,13 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Main main = new Main();
 		if (SPEC) {
-            String dirName = "20200320021019"; // 指定
+            String dirName = "20200320115740"; // 指定
             int index = Constant.idFile.lastIndexOf("/");
             Constant.idFile = Constant.idFile.substring(0, index) + "/" + dirName + Constant.idFile.substring(index);
-            Constant.TimeForTest = 34; // 指定
-            main.delayConstraint = 21; // 指定
-            main.lossConstraint = 24; // 指定
-            main.compute();
-            System.out.println(main.callTime);
+            Constant.TimeForTest = 23; // 指定
+            main.delayConstraint = 19; // 指定
+            main.lossConstraint = 16; // 指定
+            System.out.println(Arrays.toString(main.compute()));
         } else {
             String dirName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             int index = Constant.idFile.lastIndexOf("/");
