@@ -169,12 +169,12 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Main main = new Main();
 		if (SPEC) {
-            String dirName = "20200320115740"; // 指定
+            String dirName = "20200320132804"; // 指定
             int index = Constant.idFile.lastIndexOf("/");
             Constant.idFile = Constant.idFile.substring(0, index) + "/" + dirName + Constant.idFile.substring(index);
-            Constant.TimeForTest = 23; // 指定
-            main.delayConstraint = 19; // 指定
-            main.lossConstraint = 16; // 指定
+            Constant.TimeForTest = 3; // 指定
+            main.delayConstraint = 25; // 指定
+            main.lossConstraint = 33; // 指定
             System.out.println(Arrays.toString(main.compute()));
         } else {
             String dirName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
