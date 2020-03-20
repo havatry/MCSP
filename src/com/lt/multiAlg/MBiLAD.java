@@ -166,8 +166,9 @@ public class MBiLAD extends AbstractMCSPMethods{
 			}
 		case 6:
 		    // 撤销步骤的改变，因为其可能到步骤4然后步骤5，这样会出现Id矩阵的叠加
+            MCommon.add(Id, 2, 4, 1, -lambda2); // 这步必须在前面
             MCommon.swap(Id, 2, 4);
-            MCommon.add(Id, 2, 4, 1, -lambda2);
+//            MCommon.add(Id, 2, 4, 1, -lambda2);
 			if (MCommon.equal(v2_wave, v2)) {
 				log.info("v2波浪等于v2");
 				lambda1star = Math.abs(Math.tan(theta));
@@ -221,9 +222,10 @@ public class MBiLAD extends AbstractMCSPMethods{
 		double f1_value = Ptheta(pc, origin, IdLink); // 这里可能出现链路矩阵返回-1的情况，从而报错数组下标异常
 		double f2_value = Ltheta(pc, origin, IdLink);
 		// 撤销步骤5的改变, 因为步骤5可能会跳转到步骤4，然后再回到步骤5，这样会出现c+lambda1*f2的叠加
+        MCommon.add(Id, 2, 4, 1, -lambda2); // c f1 f2， 这步必须在交换2和4d前面*
         MCommon.swap(Id, 2, 4);
-        MCommon.add(Id, 2, 4, 1, -lambda2); // c f1 f2
-		log.info("给定lambda2 = {}, 计算pc波浪 = {}, f1(pc波浪) = {}, f2(pc波浪) = {}, v2 = {}", 
+//        MCommon.add(Id, 2, 4, 1, -lambda2); // c f1 f2
+		log.info("给定lambda2 = {}, 计算pc波浪 = {}, f1(pc波浪) = {}, f2(pc波浪) = {}, v2 = {}",
 				new Object[]{lambda2, pc, f1_value, f2_value, v2});
 		if (MCommon.smallEqual(f1_value, v1)) {
 			lambda1star = 0.0;

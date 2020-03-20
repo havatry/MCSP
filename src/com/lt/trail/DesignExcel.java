@@ -1,6 +1,8 @@
 package com.lt.trail;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.FileOutputStream;
@@ -27,11 +29,16 @@ public class DesignExcel {
     // 初始化表格样式
     private void init() {
         // 第一行
-        sheet.createRow(0).createCell(9).setCellValue("MBiLAD");
+        HSSFRow firstRow = sheet.createRow(0);
+        firstRow.createCell(9).setCellValue("MBiLAD");
         CellRangeAddress address = new CellRangeAddress(0, 0, 9, 14);
         sheet.addMergedRegion(address); // 合并MBiLAD
+        firstRow.createCell(15).setCellValue("YEN");
         CellRangeAddress address2 = new CellRangeAddress(0, 0, 15, 19);
         sheet.addMergedRegion(address2); // 合并YEN
+        // 设置列框
+        sheet.setColumnWidth(14, 2816);
+        sheet.setColumnWidth(19, 2816);
         // 第二行
         HSSFRow row = sheet.createRow(1);
         row.createCell(0).setCellValue("节点数");
@@ -62,12 +69,12 @@ public class DesignExcel {
         HSSFCellStyle style = workbook.createCellStyle();
         style.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
         for (int i = 0; i < data.length; i++) {
+            HSSFCell cell = row.createCell(i);
             if (i == 2) {
-                HSSFCell cell = row.createCell(i);
                 cell.setCellStyle(style);
                 cell.setCellValue((Double)data[i]);
             } else {
-                row.createCell(i).setCellValue((Integer) data[i]);
+                cell.setCellValue((Integer) data[i]);
             }
         }
     }

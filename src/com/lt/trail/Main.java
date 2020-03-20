@@ -38,7 +38,7 @@ public class Main {
 	private int callTime;
 	private DesignExcel designExcel = new DesignExcel();
 	private static Logger log = LoggerFactory.getLogger(Main.class);
-	private final static boolean SPEC = true;
+	private final static boolean SPEC = false;
 
     /**
      * 对算例进行测试， 一般需要指定Write_TimeFor的变量来测试特定文件
