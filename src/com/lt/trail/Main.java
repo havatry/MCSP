@@ -39,7 +39,7 @@ public class Main {
 	private int callTime;
 	private DesignExcel designExcel = new DesignExcel();
 	private static Logger log = LoggerFactory.getLogger(Main.class);
-	private final static boolean SPEC = true;
+	private final static boolean SPEC = false;
 
     /**
      * 对算例进行测试， 一般需要指定Write_TimeFor的变量来测试特定文件
@@ -96,43 +96,36 @@ public class Main {
             yl = (int) abstractMCSPMethods.Ltheta(pathYen, origin, IdLink);
         }
         int callTime2 = mDijkstra.getCallDijkstraTime();
-		try {
-			if (abstractMCSPMethods instanceof MBiLAD) {
-				MBiLAD mBiLAD = (MBiLAD)abstractMCSPMethods;
-				Integer v = mBiLAD.getValue();
-				if (v != null && v == 0) {
-//					throw new Exception("MBiLAD can not find a path");
-					log.info("MBiLAD can not find a path");
-                    if (!SPEC) {
-                        designExcel.writeData(Constant.WriteFile_TimeFor + 1, new Object[]
-                                {Node.length, edgeNum, averageDegree,
-                                        minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
-                                        lossConstraint, -1, -1, -1, ((MBiLAD) abstractMCSPMethods).getValue(),
-                                        callTime, (int)executeTime, yc, yd, yl, callTime2, execteTime2});
-                    }
-				} else {
-					// 存在解
-					List<Integer> optimal_path = mBiLAD.getP_negative();
-					double[][] temp = mBiLAD.getOrigin();
-					result[0] = mBiLAD.Ctheta(optimal_path, temp, IdLink);
-					result[1] = mBiLAD.Ptheta(optimal_path, temp, IdLink);
-					result[2] = mBiLAD.Ltheta(optimal_path, temp, IdLink);
-					callTime = abstractMCSPMethods.getCallDijkstraTime();
-					// 写入
-                    if (!SPEC) {
-                        designExcel.writeData(Constant.WriteFile_TimeFor + 1, new Object[]
-                                {Node.length, edgeNum, averageDegree,
-                                        minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
-                                        lossConstraint, (int)result[0], (int)result[1], (int)result[2], ((MBiLAD) abstractMCSPMethods).getValue(),
-                                        callTime, (int)executeTime, yc, yd, yl, callTime2, execteTime2});
-                    }
-					return result;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+        if (abstractMCSPMethods instanceof MBiLAD) {
+            MBiLAD mBiLAD = (MBiLAD)abstractMCSPMethods;
+            List<Integer> optimal_path = mBiLAD.getOptimalPath();
+            if (optimal_path == null) {
+                log.info("MBiLAD can not find a path");
+                if (!SPEC) {
+                    designExcel.writeData(Constant.WriteFile_TimeFor + 1, new Object[]
+                            {Node.length, edgeNum, averageDegree,
+                                    minAndMaxDegree[0], minAndMaxDegree[1], (int)minDelay, (int)minLoss, delayConstraint,
+                                    lossConstraint, -1, -1, -1, ((MBiLAD) abstractMCSPMethods).getValue(),
+                                    callTime, (int)executeTime, yc, yd, yl, callTime2, execteTime2});
+                }
+            } else {
+                double[][] temp = mBiLAD.getOrigin();
+                result[0] = mBiLAD.Ctheta(optimal_path, temp, IdLink);
+                result[1] = mBiLAD.Ptheta(optimal_path, temp, IdLink);
+                result[2] = mBiLAD.Ltheta(optimal_path, temp, IdLink);
+                callTime = abstractMCSPMethods.getCallDijkstraTime();
+                // 写入
+                if (!SPEC) {
+                    designExcel.writeData(Constant.WriteFile_TimeFor + 1, new Object[]
+                            {Node.length, edgeNum, averageDegree,
+                                    minAndMaxDegree[0], minAndMaxDegree[1], (int) minDelay, (int) minLoss, delayConstraint,
+                                    lossConstraint, (int) result[0], (int) result[1], (int) result[2], ((MBiLAD) abstractMCSPMethods).getValue(),
+                                    callTime, (int) executeTime, yc, yd, yl, callTime2, execteTime2});
+                }
+                return result;
+            }
+        }
+        return null;
 	}
 
     /**
@@ -189,6 +182,7 @@ public class Main {
                         log.info("运算结果: 代价 = {}, 延时 = {}, 丢包 = {}, 调用次数 = {}", new Object[]{result[0], result[1], result[2], main.callTime});
                     }
                 } catch (Exception e) {
+                    log.error("主程序发现异常, 进行转储。 当前测试序号 = {}, dirname = {}", Constant.TimeForTest, dirName);
                     System.err.println(e);
                     // 文件转储
                     if (!Files.exists(Paths.get("resource/save/" + dirName))) {
